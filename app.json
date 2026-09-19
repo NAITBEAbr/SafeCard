@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "safecard",
+    "name": "SafeCard",
     "slug": "safecard",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#5653D4"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,11 +20,22 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#5653D4"
+      },
+      "permissions": [
+        "CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "O SafeCard usa a camera para ler o codigo de barras dos seus cartoes."
+        }
+      ]
+    ]
   }
 }

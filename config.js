@@ -1,17 +1,23 @@
+// Configuração do Firebase.
+//
+// Crie um projeto em https://console.firebase.google.com, ative o Authentication
+// (e-mail e senha) e o Cloud Firestore, e cole aqui as credenciais do seu projeto.
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDjuNFnxWip5YBMqkVAUjlOYPCP9mjGq74",
-    authDomain: "safe-85143.firebaseapp.com",
-    projectId: "safe-85143",
-    storageBucket: "safe-85143.appspot.com",
-    messagingSenderId: "504000735362",
-    appId: "1:504000735362:web:09323835420b7f1eb8ac9b"
-  };
+  apiKey: "COLE_SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJETO",
+  storageBucket: "SEU_PROJETO.appspot.com",
+  messagingSenderId: "SEU_SENDER_ID",
+  appId: "SEU_APP_ID",
+};
 
-  const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-  const db = getFirestore(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 export default db;

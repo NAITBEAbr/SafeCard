@@ -9,37 +9,51 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { auth } from "../config";
+import { traduzErro } from "./Login";
 
-export default class Login extends Component {
+export default class SignUp extends Component {
   constructor(props) {
     super(props);
-    this.state = { email: "", password: "", carregando: false };
+    this.state = {
+      email: "",
+      password: "",
+      confirmacao: "",
+      carregando: false,
+    };
   }
 
-  handleLogin = async () => {
-    const { email, password } = this.state;
+  handleSignUp = async () => {
+    const { email, password, confirmacao } = this.state;
 
     if (!email.trim() || !password) {
       Alert.alert("Preencha o e-mail e a senha");
       return;
     }
+    if (password.length < 6) {
+      Alert.alert("A senha precisa ter pelo menos 6 caracteres");
+      return;
+    }
+    if (password !== confirmacao) {
+      Alert.alert("As senhas não são iguais");
+      return;
+    }
 
     this.setState({ carregando: true });
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await createUserWithEmailAndPassword(auth, email.trim(), password);
       this.props.navigation.replace("BottomTab");
     } catch (error) {
-      Alert.alert("Não foi possível entrar", traduzErro(error.code));
+      Alert.alert("Não foi possível cadastrar", traduzErro(error.code));
     } finally {
       this.setState({ carregando: false });
     }
   };
 
   render() {
-    const { email, password, carregando } = this.state;
+    const { email, password, confirmacao, carregando } = this.state;
 
     return (
       <KeyboardAvoidingView
@@ -47,8 +61,7 @@ export default class Login extends Component {
         style={styles.container}
       >
         <View style={styles.header}>
-          <Text style={styles.logo}>SafeCard</Text>
-          <Text style={styles.slogan}>seus cartões de fidelidade num lugar só</Text>
+          <Text style={styles.titulo}>Criar conta</Text>
         </View>
 
         <View style={styles.form}>
@@ -69,21 +82,27 @@ export default class Login extends Component {
             value={password}
             onChangeText={(texto) => this.setState({ password: texto })}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirme a senha"
+            placeholderTextColor="#9C9C9C"
+            secureTextEntry
+            value={confirmacao}
+            onChangeText={(texto) => this.setState({ confirmacao: texto })}
+          />
 
           <TouchableOpacity
             style={[styles.botao, carregando && styles.botaoDesativado]}
-            onPress={this.handleLogin}
+            onPress={this.handleSignUp}
             disabled={carregando}
           >
             <Text style={styles.botaoTexto}>
-              {carregando ? "Entrando..." : "Entrar"}
+              {carregando ? "Criando..." : "Cadastrar"}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("SignUp")}
-          >
-            <Text style={styles.link}>Não tem conta? Cadastre-se</Text>
+          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <Text style={styles.link}>Já tenho conta</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -91,25 +110,10 @@ export default class Login extends Component {
   }
 }
 
-export function traduzErro(codigo) {
-  const mensagens = {
-    "auth/invalid-email": "E-mail inválido.",
-    "auth/user-not-found": "Não existe conta com esse e-mail.",
-    "auth/wrong-password": "Senha incorreta.",
-    "auth/invalid-credential": "E-mail ou senha incorretos.",
-    "auth/email-already-in-use": "Esse e-mail já está cadastrado.",
-    "auth/weak-password": "A senha precisa ter pelo menos 6 caracteres.",
-    "auth/network-request-failed": "Sem conexão com a internet.",
-    "auth/too-many-requests": "Muitas tentativas. Tente de novo mais tarde.",
-  };
-  return mensagens[codigo] || "Tente novamente.";
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#5653D4", justifyContent: "center" },
-  header: { alignItems: "center", marginBottom: 40 },
-  logo: { fontSize: 44, fontWeight: "bold", color: "#FFFFFF" },
-  slogan: { fontSize: 15, color: "#D8D7F5", marginTop: 6 },
+  header: { alignItems: "center", marginBottom: 30 },
+  titulo: { fontSize: 32, fontWeight: "bold", color: "#FFFFFF" },
   form: { paddingHorizontal: 30 },
   input: {
     backgroundColor: "#FFFFFF",
